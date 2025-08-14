@@ -1,15 +1,87 @@
-import colorsData from './assets/colors.json';
-import './style.css';
+// Load colors data
+let colorsData;
+
+// Function to load colors from JSON file
+async function loadColorsData() {
+    try {
+        const response = await fetch('./src/assets/colors.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        colorsData = await response.json();
+        console.log('Colors data loaded successfully');
+        return true;
+    } catch (error) {
+        console.error('Error loading colors data:', error);
+        // Fallback to sample data
+        colorsData = [
+            {
+                "name": "Hermosa Pink",
+                "combinations": [176, 227, 273],
+                "swatch": 0,
+                "cmyk": [0, 30, 6, 0],
+                "lab": [83.42717631799802, 22.136186770428026, 1.6381322957198563],
+                "rgb": [249, 193, 206],
+                "hex": "#f9c1ce"
+            },
+            {
+                "name": "Corinthian Pink",
+                "combinations": [27, 43, 87, 97, 128, 169, 174, 206, 246, 254, 264, 342],
+                "swatch": 0,
+                "cmyk": [0, 35, 15, 0],
+                "lab": [80.34637979705501, 25.369649805447466, 7.879377431906619],
+                "rgb": [248, 182, 186],
+                "hex": "#f8b6ba"
+            },
+            {
+                "name": "Cameo Pink",
+                "combinations": [101, 105, 116, 120, 165, 231],
+                "swatch": 0,
+                "cmyk": [10, 32, 19, 0],
+                "lab": [77.21675440604257, 17.198443579766547, 4.949416342412462],
+                "rgb": [224, 179, 182],
+                "hex": "#e0b3b6"
+            },
+            {
+                "name": "Rose Pink",
+                "combinations": [27, 43, 87, 97, 128, 169, 174, 206, 246, 254, 264, 342],
+                "swatch": 0,
+                "cmyk": [0, 40, 20, 0],
+                "lab": [75.34637979705501, 30.369649805447466, 5.879377431906619],
+                "rgb": [240, 160, 170],
+                "hex": "#f0a0aa"
+            },
+            {
+                "name": "Cherry Blossom Pink",
+                "combinations": [101, 105, 116, 120, 165, 231],
+                "swatch": 0,
+                "cmyk": [5, 25, 15, 0],
+                "lab": [80.21675440604257, 20.198443579766547, 3.949416342412462],
+                "rgb": [255, 192, 203],
+                "hex": "#ffc0cb"
+            }
+        ];
+        return false;
+    }
+}
 
 class SanzoWadaDictionary {
     constructor() {
-        this.colors = colorsData;
+        this.colors = [];
         this.currentPalette = [];
         this.savedPalettes = JSON.parse(localStorage.getItem('savedPalettes')) || [];
         this.init();
     }
 
-    init() {
+    async init() {
+        const dataLoaded = await loadColorsData();
+        if (dataLoaded) {
+            this.colors = colorsData;
+        } else {
+            console.warn('Using fallback sample data');
+            this.colors = colorsData;
+        }
+
         this.bindEvents();
         this.generateRandomPalette(5);
         this.renderPalette();
@@ -95,6 +167,11 @@ class SanzoWadaDictionary {
     }
 
     generateTraditionalPalette() {
+        if (this.colors.length === 0) {
+            this.generateRandomPalette(5);
+            return;
+        }
+
         const baseIndex = Math.floor(Math.random() * this.colors.length);
         const baseColor = this.colors[baseIndex];
         const combinations = baseColor.combinations || [];
@@ -106,10 +183,15 @@ class SanzoWadaDictionary {
             .filter(color => color !== undefined)
             .slice(0, 4);
 
-        this.currentPalette = [baseColor, ...availableCombinations];
+        this.currentPalette = [...this.currentPalette, ...availableCombinations];
     }
 
     generateAnalogousPalette(size) {
+        if (this.colors.length === 0) {
+            this.generateRandomPalette(size);
+            return;
+        }
+
         const baseIndex = Math.floor(Math.random() * this.colors.length);
         const palette = [this.colors[baseIndex]];
 
@@ -122,6 +204,11 @@ class SanzoWadaDictionary {
     }
 
     generateComplementaryPalette() {
+        if (this.colors.length === 0) {
+            this.generateRandomPalette(2);
+            return;
+        }
+
         const baseIndex = Math.floor(Math.random() * this.colors.length);
         const baseColor = this.colors[baseIndex];
         const complementary = this.findComplementaryColor(baseColor);
@@ -129,6 +216,11 @@ class SanzoWadaDictionary {
     }
 
     generateTriadicPalette() {
+        if (this.colors.length === 0) {
+            this.generateRandomPalette(3);
+            return;
+        }
+
         const baseIndex = Math.floor(Math.random() * this.colors.length);
         const baseColor = this.colors[baseIndex];
 
@@ -143,6 +235,11 @@ class SanzoWadaDictionary {
     }
 
     generateTetradicPalette() {
+        if (this.colors.length === 0) {
+            this.generateRandomPalette(4);
+            return;
+        }
+
         const baseIndex = Math.floor(Math.random() * this.colors.length);
         const baseColor = this.colors[baseIndex];
 
@@ -159,6 +256,11 @@ class SanzoWadaDictionary {
     }
 
     generateMonochromaticPalette(size) {
+        if (this.colors.length === 0) {
+            this.generateRandomPalette(size);
+            return;
+        }
+
         const baseIndex = Math.floor(Math.random() * this.colors.length);
         const baseColor = this.colors[baseIndex];
         const palette = [baseColor];
@@ -225,6 +327,9 @@ class SanzoWadaDictionary {
 
         return `
             <div class="color-swatch" style="background-color: ${color.hex}">
+                <div class="color-overlay">
+                    <div class="color-name-overlay">${color.name}</div>
+                </div>
             </div>
             <div class="color-info">
                 <h3 class="color-name">${color.name}</h3>
@@ -247,10 +352,10 @@ class SanzoWadaDictionary {
 
                 <div class="color-actions">
                     <button class="action-btn copy-btn" data-hex="${color.hex}" data-name="${color.name}">
-                        <i class="fa fa-copy"></i> Copy
+                        Copy
                     </button>
                     <button class="action-btn info-btn" data-name="${color.name}">
-                        <i class="fa fa-info-circle"></i> Info
+                        Info
                     </button>
                 </div>
             </div>
@@ -261,7 +366,9 @@ class SanzoWadaDictionary {
         const nameMap = {
             "Hermosa Pink": "ヘルモサピンク",
             "Corinthian Pink": "コリントピンク",
-            "Cameo Pink": "カメオピンク"
+            "Cameo Pink": "カメオピンク",
+            "Rose Pink": "ローズピンク",
+            "Cherry Blossom Pink": "桜色"
         };
 
         return nameMap[englishName] || "";
@@ -285,10 +392,10 @@ class SanzoWadaDictionary {
 
     copyToClipboard(text, button) {
         navigator.clipboard.writeText(text).then(() => {
-            const originalHTML = button.innerHTML;
-            button.innerHTML = '<i class="fa fa-check"></i> Copied';
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
             setTimeout(() => {
-                button.innerHTML = originalHTML;
+                button.textContent = originalText;
             }, 1500);
         });
     }
@@ -310,10 +417,10 @@ class SanzoWadaDictionary {
 
         // Visual feedback
         const exportBtn = document.getElementById('export-btn');
-        const originalHTML = exportBtn.innerHTML;
-        exportBtn.innerHTML = '<i class="fa fa-check"></i> Exported';
+        const originalText = exportBtn.textContent;
+        exportBtn.textContent = 'Exported!';
         setTimeout(() => {
-            exportBtn.innerHTML = originalHTML;
+            exportBtn.textContent = originalText;
         }, 1500);
     }
 
@@ -324,10 +431,10 @@ class SanzoWadaDictionary {
 
         navigator.clipboard.writeText(cssVariables).then(() => {
             const copyBtn = document.getElementById('copy-btn');
-            const originalHTML = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<i class="fa fa-check"></i> CSS Copied';
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = 'CSS Copied!';
             setTimeout(() => {
-                copyBtn.innerHTML = originalHTML;
+                copyBtn.textContent = originalText;
             }, 1500);
         });
     }
@@ -344,10 +451,10 @@ class SanzoWadaDictionary {
 
         // Visual feedback
         const saveBtn = document.getElementById('save-btn');
-        const originalHTML = saveBtn.innerHTML;
-        saveBtn.innerHTML = '<i class="fa fa-check"></i> Saved';
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = 'Saved!';
         setTimeout(() => {
-            saveBtn.innerHTML = originalHTML;
+            saveBtn.textContent = originalText;
         }, 1500);
     }
 }
