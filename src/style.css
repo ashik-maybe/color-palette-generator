@@ -236,10 +236,11 @@ body {
     position: relative;
     border-bottom: 1px solid var(--border);
     transition: filter 0.3s ease;
+    cursor: pointer;
 }
 
 .color-swatch:hover {
-    filter: brightness(1.05);
+    filter: brightness(0.85);
 }
 
 .color-overlay {
@@ -260,10 +261,11 @@ body {
     opacity: 1;
 }
 
-.color-name-overlay {
+.color-hex-overlay {
     color: white;
-    font-family: var(--font-serif-en);
-    font-size: 0.9rem;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: bold;
     text-align: center;
     padding: var(--spacing-xs);
 }
@@ -288,33 +290,30 @@ body {
 .color-details {
     font-family: var(--font-sans);
     font-size: 0.75rem;
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: 0;
 }
 
 .color-detail {
     display: flex;
     justify-content: space-between;
     margin-bottom: 1px;
+    padding: 3px 5px;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.color-detail:hover {
+    background: #f0e8d0;
+}
+
+.color-detail.copied {
+    background: #e0f0e0;
+    color: #2a9d8f;
 }
 
 .color-actions {
-    display: flex;
-    gap: var(--spacing-xs);
-}
-
-.action-btn {
-    flex: 1;
-    padding: 0.2rem 0.4rem;
-    border: 1px solid var(--border);
-    background: var(--paper);
-    font-family: var(--font-serif-en);
-    font-size: 0.7rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.action-btn:hover {
-    background: #f0e8d0;
+    display: none;
 }
 
 /* Info Overlay */
@@ -412,6 +411,11 @@ body {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes copied {
+    0% { background: #e0f0e0; }
+    100% { background: transparent; }
 }
 
 .color-sample {

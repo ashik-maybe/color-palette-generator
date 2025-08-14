@@ -326,9 +326,9 @@ class SanzoWadaDictionary {
         const japaneseName = this.getJapaneseName(color.name);
 
         return `
-            <div class="color-swatch" style="background-color: ${color.hex}">
+            <div class="color-swatch" style="background-color: ${color.hex}" data-hex="${color.hex}">
                 <div class="color-overlay">
-                    <div class="color-name-overlay">${color.name}</div>
+                    <div class="color-hex-overlay">${color.hex}</div>
                 </div>
             </div>
             <div class="color-info">
@@ -336,27 +336,18 @@ class SanzoWadaDictionary {
                 ${japaneseName ? `<div class="color-japanese">${japaneseName}</div>` : ''}
 
                 <div class="color-details">
-                    <div class="color-detail">
+                    <div class="color-detail" data-value="${color.hex}">
                         <span>HEX:</span>
                         <span>${color.hex}</span>
                     </div>
-                    <div class="color-detail">
+                    <div class="color-detail" data-value="rgb(${r}, ${g}, ${b})">
                         <span>RGB:</span>
                         <span>${r}, ${g}, ${b}</span>
                     </div>
-                    <div class="color-detail">
+                    <div class="color-detail" data-value="cmyk(${c}%, ${m}%, ${y}%, ${k}%)">
                         <span>CMYK:</span>
                         <span>${c}, ${m}, ${y}, ${k}</span>
                     </div>
-                </div>
-
-                <div class="color-actions">
-                    <button class="action-btn copy-btn" data-hex="${color.hex}" data-name="${color.name}">
-                        Copy
-                    </button>
-                    <button class="action-btn info-btn" data-name="${color.name}">
-                        Info
-                    </button>
                 </div>
             </div>
         `;
@@ -375,28 +366,42 @@ class SanzoWadaDictionary {
     }
 
     bindColorCardEvents() {
-        document.querySelectorAll('.copy-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const hex = e.target.closest('.copy-btn').dataset.hex;
-                this.copyToClipboard(hex, e.target);
+        // Bind swatch hover events
+        document.querySelectorAll('.color-swatch').forEach(swatch => {
+            swatch.addEventListener('click', (e) => {
+                const hex = e.currentTarget.dataset.hex;
+                this.copyToClipboard(hex, e.currentTarget);
             });
         });
 
-        document.querySelectorAll('.info-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const name = e.target.closest('.info-btn').dataset.name;
-                this.showColorInfo(name);
+        // Bind color detail click events
+        document.querySelectorAll('.color-detail').forEach(detail => {
+            detail.addEventListener('click', (e) => {
+                const value = e.currentTarget.dataset.value;
+                this.copyToClipboard(value, e.currentTarget);
             });
         });
     }
 
-    copyToClipboard(text, button) {
+    copyToClipboard(text, element) {
         navigator.clipboard.writeText(text).then(() => {
-            const originalText = button.textContent;
-            button.textContent = 'Copied!';
-            setTimeout(() => {
-                button.textContent = originalText;
-            }, 1500);
+            // Visual feedback for swatch copy
+            if (element.classList.contains('color-swatch')) {
+                const overlay = element.querySelector('.color-overlay');
+                const originalContent = overlay.innerHTML;
+                overlay.innerHTML = '<div class="color-hex-overlay">Copied!</div>';
+
+                setTimeout(() => {
+                    overlay.innerHTML = originalContent;
+                }, 1000);
+            }
+            // Visual feedback for detail copy
+            else if (element.classList.contains('color-detail')) {
+                element.classList.add('copied');
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                }, 1000);
+            }
         });
     }
 
