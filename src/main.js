@@ -1,7 +1,7 @@
 import colorsData from './assets/colors.json';
 import './style.css';
 
-class ColorDictionary {
+class SanzoWadaDictionary {
     constructor() {
         this.colors = colorsData;
         this.currentPalette = [];
@@ -11,10 +11,8 @@ class ColorDictionary {
 
     init() {
         this.bindEvents();
-        this.loadThemePreference();
         this.generateRandomPalette(5);
         this.renderPalette();
-        this.updateSliderFill();
     }
 
     bindEvents() {
@@ -27,28 +25,21 @@ class ColorDictionary {
         const copyBtn = document.getElementById('copy-btn');
         const saveBtn = document.getElementById('save-btn');
 
-        // Header elements
-        const themeToggle = document.getElementById('theme-toggle');
+        // Info panel elements
         const infoToggle = document.getElementById('info-toggle');
         const closeInfo = document.getElementById('close-info');
         const infoPanel = document.getElementById('info-panel');
-
-        // Slider events
-        const sliderFill = document.querySelector('.slider-fill');
-        const sliderThumb = document.querySelector('.slider-thumb');
 
         // Event listeners
         generateBtn.addEventListener('click', () => this.generateNewPalette());
         modeSelect.addEventListener('change', () => this.generateNewPalette());
         paletteSize.addEventListener('input', (e) => {
             sizeValue.textContent = e.target.value;
-            this.updateSliderFill();
             this.generateNewPalette();
         });
         exportBtn.addEventListener('click', () => this.exportPalette());
         copyBtn.addEventListener('click', () => this.copyPaletteToCSS());
         saveBtn.addEventListener('click', () => this.savePalette());
-        themeToggle.addEventListener('click', () => this.toggleTheme());
         infoToggle.addEventListener('click', () => this.toggleInfoPanel());
         closeInfo.addEventListener('click', () => this.toggleInfoPanel());
 
@@ -60,42 +51,6 @@ class ColorDictionary {
                 this.toggleInfoPanel();
             }
         });
-
-        // Update slider fill on load
-        this.updateSliderFill();
-    }
-
-    updateSliderFill() {
-        const paletteSize = document.getElementById('palette-size');
-        const sliderFill = document.querySelector('.slider-fill');
-        const sliderThumb = document.querySelector('.slider-thumb');
-        const value = parseInt(paletteSize.value);
-        const min = parseInt(paletteSize.min);
-        const max = parseInt(paletteSize.max);
-        const percentage = ((value - min) / (max - min)) * 100;
-
-        sliderFill.style.width = `${percentage}%`;
-        sliderThumb.style.left = `${percentage}%`;
-    }
-
-    loadThemePreference() {
-        const savedTheme = localStorage.getItem('theme') ||
-            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        this.updateThemeIcon(savedTheme);
-    }
-
-    toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        this.updateThemeIcon(newTheme);
-    }
-
-    updateThemeIcon(theme) {
-        const themeIcon = document.querySelector('#theme-toggle i');
-        themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     }
 
     toggleInfoPanel() {
@@ -251,7 +206,7 @@ class ColorDictionary {
 
         this.currentPalette.forEach((color) => {
             const colorCard = document.createElement('div');
-            colorCard.className = 'harmony-card';
+            colorCard.className = 'color-sample';
             colorCard.innerHTML = this.createColorCardHTML(color);
             container.appendChild(colorCard);
         });
@@ -270,9 +225,6 @@ class ColorDictionary {
 
         return `
             <div class="color-swatch" style="background-color: ${color.hex}">
-                <div class="color-overlay">
-                    <div class="color-name-overlay">${color.name}</div>
-                </div>
             </div>
             <div class="color-info">
                 <h3 class="color-name">${color.name}</h3>
@@ -280,29 +232,25 @@ class ColorDictionary {
 
                 <div class="color-details">
                     <div class="color-detail">
-                        <span class="detail-label">HEX</span>
-                        <span class="detail-value">${color.hex}</span>
+                        <span>HEX:</span>
+                        <span>${color.hex}</span>
                     </div>
                     <div class="color-detail">
-                        <span class="detail-label">RGB</span>
-                        <span class="detail-value">${r}, ${g}, ${b}</span>
+                        <span>RGB:</span>
+                        <span>${r}, ${g}, ${b}</span>
                     </div>
                     <div class="color-detail">
-                        <span class="detail-label">CMYK</span>
-                        <span class="detail-value">${c}, ${m}, ${y}, ${k}</span>
-                    </div>
-                    <div class="color-detail">
-                        <span class="detail-label">LAB</span>
-                        <span class="detail-value">${l.toFixed(1)}, ${a.toFixed(1)}, ${bVal.toFixed(1)}</span>
+                        <span>CMYK:</span>
+                        <span>${c}, ${m}, ${y}, ${k}</span>
                     </div>
                 </div>
 
                 <div class="color-actions">
                     <button class="action-btn copy-btn" data-hex="${color.hex}" data-name="${color.name}">
-                        <i class="fas fa-copy"></i> Copy
+                        <i class="fa fa-copy"></i> Copy
                     </button>
                     <button class="action-btn info-btn" data-name="${color.name}">
-                        <i class="fas fa-info-circle"></i> Info
+                        <i class="fa fa-info-circle"></i> Info
                     </button>
                 </div>
             </div>
@@ -338,7 +286,7 @@ class ColorDictionary {
     copyToClipboard(text, button) {
         navigator.clipboard.writeText(text).then(() => {
             const originalHTML = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-check"></i> Copied';
+            button.innerHTML = '<i class="fa fa-check"></i> Copied';
             setTimeout(() => {
                 button.innerHTML = originalHTML;
             }, 1500);
@@ -356,14 +304,14 @@ class ColorDictionary {
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'color-dictionary-palette.json';
+        link.download = 'sanzo-wada-palette.json';
         link.click();
         URL.revokeObjectURL(url);
 
         // Visual feedback
         const exportBtn = document.getElementById('export-btn');
         const originalHTML = exportBtn.innerHTML;
-        exportBtn.innerHTML = '<i class="fas fa-check"></i> Exported';
+        exportBtn.innerHTML = '<i class="fa fa-check"></i> Exported';
         setTimeout(() => {
             exportBtn.innerHTML = originalHTML;
         }, 1500);
@@ -377,7 +325,7 @@ class ColorDictionary {
         navigator.clipboard.writeText(cssVariables).then(() => {
             const copyBtn = document.getElementById('copy-btn');
             const originalHTML = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<i class="fas fa-check"></i> CSS Copied';
+            copyBtn.innerHTML = '<i class="fa fa-check"></i> CSS Copied';
             setTimeout(() => {
                 copyBtn.innerHTML = originalHTML;
             }, 1500);
@@ -393,24 +341,18 @@ class ColorDictionary {
 
         this.savedPalettes.push(paletteData);
         localStorage.setItem('savedPalettes', JSON.stringify(this.savedPalettes));
-        this.updateSavedPalettesCount();
 
         // Visual feedback
         const saveBtn = document.getElementById('save-btn');
         const originalHTML = saveBtn.innerHTML;
-        saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved';
+        saveBtn.innerHTML = '<i class="fa fa-check"></i> Saved';
         setTimeout(() => {
             saveBtn.innerHTML = originalHTML;
         }, 1500);
-    }
-
-    updateSavedPalettesCount() {
-        // In a real app, this would update a counter in the UI
-        console.log(`Saved palettes: ${this.savedPalettes.length}`);
     }
 }
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new ColorDictionary();
+    new SanzoWadaDictionary();
 });

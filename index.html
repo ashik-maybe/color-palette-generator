@@ -1,109 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Dictionary of Color Combinations</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>色見本の辞典 - A Dictionary of Color Combinations</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;700&family=Noto+Sans+JP:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-    <div class="dictionary-world">
+    <div class="dictionary-container">
         <header class="dictionary-header">
-            <div class="header-title">
-                <h1 class="main-title">色見本の辞典</h1>
-                <p class="subtitle">A Dictionary of Color Combinations</p>
-            </div>
-            <div class="header-controls">
-                <button id="theme-toggle" class="world-button" aria-label="Toggle theme">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button id="info-toggle" class="world-button" aria-label="About this dictionary">
-                    <i class="fas fa-book"></i>
-                </button>
+            <div class="header-content">
+                <h1 class="title-japanese">色見本の辞典</h1>
+                <h2 class="title-english">A Dictionary of Color Combinations</h2>
+                <p class="subtitle">By Sanzo Wada - 1934</p>
             </div>
         </header>
 
         <main class="dictionary-main">
-            <div class="creation-tools">
-                <div class="tool-section">
-                    <div class="tool-item">
-                        <label class="tool-label">Harmony Method</label>
-                        <div class="custom-select">
-                            <select id="mode-select">
-                                <option value="random">Random Discovery</option>
-                                <option value="traditional">Traditional Pairings</option>
-                                <option value="analogous">Analogous Flow</option>
-                                <option value="complementary">Complementary Balance</option>
-                                <option value="triadic">Triadic Harmony</option>
-                                <option value="tetradic">Tetradic Richness</option>
-                                <option value="monochromatic">Monochromatic Depth</option>
-                            </select>
-                            <div class="select-arrow">
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                        </div>
-                    </div>
+            <div class="tools-section">
+                <div class="tool-group">
+                    <label class="tool-label">Harmony Method:</label>
+                    <select id="mode-select" class="vintage-select">
+                        <option value="random">Random Discovery</option>
+                        <option value="traditional">Traditional Pairings</option>
+                        <option value="analogous">Analogous Flow</option>
+                        <option value="complementary">Complementary Balance</option>
+                        <option value="triadic">Triadic Harmony</option>
+                        <option value="tetradic">Tetradic Richness</option>
+                        <option value="monochromatic">Monochromatic Depth</option>
+                    </select>
+                </div>
 
-                    <div class="tool-item">
-                        <label class="tool-label">Color Count</label>
-                        <div class="slider-wrapper">
-                            <span id="size-value" class="size-display">5</span>
-                            <div class="custom-slider">
-                                <input type="range" id="palette-size" min="2" max="8" value="5">
-                                <div class="slider-track"></div>
-                                <div class="slider-fill"></div>
-                                <div class="slider-thumb"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tool-item">
-                        <button id="generate-btn" class="creation-button">
-                            <span>Create Harmony</span>
-                            <i class="fas fa-wand-magic-sparkles"></i>
-                        </button>
+                <div class="tool-group">
+                    <label class="tool-label">Number of Colors:</label>
+                    <div class="slider-container">
+                        <span id="size-value" class="size-display">5</span>
+                        <input type="range" id="palette-size" min="2" max="8" value="5" class="vintage-slider">
                     </div>
                 </div>
 
-                <div class="action-tools">
-                    <button id="export-btn" class="tool-button">
-                        <i class="fas fa-file-export"></i>
-                        <span>Export</span>
-                    </button>
-                    <button id="copy-btn" class="tool-button">
-                        <i class="fas fa-copy"></i>
-                        <span>CSS</span>
-                    </button>
-                    <button id="save-btn" class="tool-button">
-                        <i class="fas fa-bookmark"></i>
-                        <span>Save</span>
+                <div class="tool-group">
+                    <button id="generate-btn" class="vintage-button">
+                        Create Harmony
                     </button>
                 </div>
             </div>
 
-            <div class="harmony-gallery">
+            <div class="action-buttons">
+                <button id="export-btn" class="action-button">
+                    <i class="fa fa-download"></i> Export
+                </button>
+                <button id="copy-btn" class="action-button">
+                    <i class="fa fa-files-o"></i> CSS
+                </button>
+                <button id="save-btn" class="action-button">
+                    <i class="fa fa-bookmark"></i> Save
+                </button>
+                <button id="info-toggle" class="action-button">
+                    <i class="fa fa-info-circle"></i> About
+                </button>
+            </div>
+
+            <div class="color-gallery">
                 <div id="palette-container" class="gallery-container">
-                    <!-- Harmony cards will be rendered here -->
+                    <!-- Color samples will be rendered here -->
                 </div>
             </div>
         </main>
 
-        <div id="info-panel" class="knowledge-panel">
-            <div class="panel-content">
-                <div class="panel-header">
-                    <h2>The Dictionary</h2>
-                    <button id="close-info" class="panel-close">
-                        <i class="fas fa-times"></i>
-                    </button>
+        <div id="info-panel" class="info-overlay">
+            <div class="info-content">
+                <div class="info-header">
+                    <h2>About This Dictionary</h2>
+                    <button id="close-info" class="close-button">×</button>
                 </div>
-                <div class="panel-body">
+                <div class="info-body">
                     <p>In 1934, Sanzo Wada published "A Dictionary of Color Combinations" - a seminal work documenting traditional Japanese color harmonies.</p>
-                    <p>This digital tribute recreates his methodology with modern tools while preserving the essence of his color philosophy.</p>
-                    <div class="wada-portrait">
-                        <div class="portrait-placeholder"></div>
+                    <p>This digital recreation honors his methodology while adapting it for the modern age. Each color combination is generated using principles from his original work.</p>
+                    <div class="signature-section">
+                        <div class="signature-placeholder"></div>
                         <p>Sanzo Wada (1883-1967)</p>
                     </div>
                 </div>
